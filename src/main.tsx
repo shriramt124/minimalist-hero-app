@@ -20,6 +20,7 @@ const Home = lazy(() => import("./pages/Home.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const Projects = lazy(() => import("./pages/Projects.tsx"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail.tsx"));
+const Films = lazy(() => import("./pages/Films.tsx"));
 const Services = lazy(() => import("./pages/Services.tsx"));
 const Process = lazy(() => import("./pages/Process.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
@@ -132,6 +133,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/about" element={<About />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:slug" element={<ProjectDetail />} />
+                <Route path="/films" element={<Films />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/process" element={<Process />} />
                 <Route path="/contact" element={<Contact />} />

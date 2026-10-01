@@ -25,6 +25,7 @@ export const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "Studio", to: "/about" },
   { label: "Projects", to: "/projects" },
+  { label: "Films", to: "/films" },
   { label: "Services", to: "/services" },
   { label: "Process", to: "/process" },
   { label: "Contact", to: "/contact" },
@@ -573,6 +574,106 @@ export const INSTAGRAM_FEED = [
 ];
 
 export const FOUNDER_PORTRAIT = img("photo-1560250097-0b93528c311a", 1000);
+
+/**
+ * Studio films.
+ *
+ * `src` points at external MP4 files played by the <video> element — no
+ * bundling or third-party embeds. The current URLs are royalty-free demo clips
+ * so the player is fully functional out of the box: swap each `src` for the
+ * studio's real film files (or a CDN/hosting URL) and update `poster`,
+ * `duration` and `blurb` to match.
+ */
+export interface Film {
+  slug: string;
+  title: string;
+  category: string;
+  year: string;
+  duration: string;
+  blurb: string;
+  poster: string;
+  src: string;
+  featured?: boolean;
+}
+
+const clip = (file: string) =>
+  `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/${file}`;
+
+export const FILMS: Film[] = [
+  {
+    slug: "studio-showreel",
+    title: "Studio Showreel",
+    category: "Showreel",
+    year: "2024",
+    duration: "0:48",
+    blurb:
+      "A minute inside HM DESIGNZ — light studies, material samples and finished rooms across Indore, cut to the studio's own rhythm.",
+    poster: img("photo-1600585154340-be6161a56a0c", 1800),
+    src: clip("ForBiggerBlazes.mp4"),
+    featured: true,
+  },
+  {
+    slug: "serial-residency-film",
+    title: "A Home in Daylight",
+    category: "Residential",
+    year: "2024",
+    duration: "2:14",
+    blurb:
+      "Walking Serial Residency, where a central light court carries daylight through every room of the bungalow.",
+    poster: img("photo-1600210492486-724fe5c67fb0", 1400),
+    src: clip("ForBiggerEscapes.mp4"),
+  },
+  {
+    slug: "noir-penthouse-film",
+    title: "Living Above the Skyline",
+    category: "Interior",
+    year: "2023",
+    duration: "1:36",
+    blurb:
+      "Dusk falls in the Noir Penthouse — smoked oak, warm pools of light and a city view that becomes the artwork.",
+    poster: img("photo-1600607687920-4e2a09cf159d", 1400),
+    src: clip("ForBiggerFun.mp4"),
+  },
+  {
+    slug: "courtyard-house-film",
+    title: "Vastu, Reimagined",
+    category: "Vastu",
+    year: "2024",
+    duration: "1:58",
+    blurb:
+      "How traditional Vastu zoning became structure, not decoration, at The Courtyard House in Bicholi Mardana.",
+    poster: img("photo-1613490493576-7fde63acd811", 1400),
+    src: clip("ForBiggerJoyrides.mp4"),
+  },
+  {
+    slug: "ember-kitchen-film",
+    title: "The Warm Heart",
+    category: "Modular Kitchen",
+    year: "2023",
+    duration: "1:05",
+    blurb:
+      "A hardworking Ember Kitchen built around the daily rhythm of a joint family — veneer, quartz and soft task light.",
+    poster: img("photo-1631679706909-1844bbd07221", 1400),
+    src: clip("ForBiggerMeltdowns.mp4"),
+  },
+  {
+    slug: "terra-office-film",
+    title: "A Calm Headquarters",
+    category: "Commercial",
+    year: "2022",
+    duration: "1:42",
+    blurb:
+      "Terra Office in Palasia — planted neighbourhoods, acoustic oak and quiet luxury for a growing firm.",
+    poster: img("photo-1497366216548-37526070297c", 1400),
+    src: clip("VolkswagenGTIReview.mp4"),
+  },
+];
+
+export const FEATURED_FILM: Film = FILMS.find((f) => f.featured) ?? FILMS[0];
+
+export function getFilm(slug: string): Film | undefined {
+  return FILMS.find((f) => f.slug === slug);
+}
 
 export const VALUES = [
   {

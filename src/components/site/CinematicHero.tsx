@@ -17,18 +17,27 @@ const SLIDE_MS = 6800;
 const FADE_S = 2.4;
 
 /**
- * Optionally drop a muted background video here and it will play behind the
- * image slideshow (kept as a fallback layer). Leave null to use stills only —
- * reliable and lightweight for a prototype.
+ * Hero background reel. The studio's showreel plays as the opening slide of the
+ * crossfade loop, then the stills take over. Point `src` at the studio's own
+ * MP4 (or set it to null to run a stills-only hero).
  */
-const HERO_VIDEO: string | null = null;
+const HERO_REEL: { src: string | null; poster: string } = {
+  src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+  poster:
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80",
+};
 
-const SLIDES = [
-  {
-    src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80",
-    label: "Serial Residency",
-    location: "Vijay Nagar, Indore",
-  },
+interface Slide {
+  src: string;
+  label: string;
+  location: string;
+  /** When present the slide plays this muted MP4 instead of a still image. */
+  video?: string;
+  /** Hold time before the next crossfade (defaults to SLIDE_MS). */
+  hold?: number;
+}
+
+const STILL_SLIDES: Slide[] = [
   {
     src: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2400&q=80",
     label: "Noir Penthouse",
@@ -44,6 +53,21 @@ const SLIDES = [
     label: "Ivory Suite",
     location: "Vijay Nagar, Indore",
   },
+];
+
+const SLIDES: Slide[] = [
+  ...(HERO_REEL.src
+    ? [
+        {
+          src: HERO_REEL.poster,
+          label: "Studio Showreel",
+          location: "HM DESIGNZ · Indore",
+          video: HERO_REEL.src,
+          hold: 12000,
+        },
+      ]
+    : []),
+  ...STILL_SLIDES,
 ];
 
 const copyContainer: Variants = {
@@ -97,10 +121,10 @@ export function CinematicHero() {
     if (reduce || paused) return;
     const timer = window.setInterval(
       () => setActive((i) => (i + 1) % SLIDES.length),
-      SLIDE_MS,
+      SLIDES[active].hold ?? SLIDE_MS,
     );
     return () => window.clearInterval(timer);
-  }, [reduce, paused]);
+  }, [reduce, paused, active]);
 
   return (
     <section
@@ -108,33 +132,37 @@ export function CinematicHero() {
       onMouseLeave={() => setPaused(false)}
       className="relative isolate -mt-[74px] flex min-h-[100svh] flex-col overflow-hidden pt-[74px]"
     >
-      {/* --- Layered slideshow: slow dissolve + continuous Ken Burns drift --- */}
+      {/* --- Layered reel: ambient video + stills, slow dissolve + Ken Burns --- */}
       <div aria-hidden="true" className="absolute inset-0 -z-20 bg-ink">
-        {HERO_VIDEO && (
-          <video
-            className="absolute inset-0 size-full object-cover"
-            src={HERO_VIDEO}
-            autoPlay
-            muted
-            loop
-            playsInline
-          />
-        )}
         {SLIDES.map((slide, i) => (
           <motion.div
-            key={slide.src}
+            key={slide.label}
             className="absolute inset-0"
             initial={false}
             animate={{ opacity: i === active ? 1 : 0 }}
             transition={{ duration: reduce ? 0.6 : FADE_S, ease: "easeInOut" }}
           >
-            <img
-              src={slide.src}
-              alt=""
-              loading={i === 0 ? "eager" : "lazy"}
-              className="ken-burns size-full object-cover will-change-transform"
-              style={{ animationDelay: `${i * -4.5}s` }}
-            />
+            {slide.video ? (
+              <div className="ken-burns size-full will-change-transform">
+                <video
+                  src={slide.video}
+                  poster={slide.src}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="size-full object-cover"
+                />
+              </div>
+            ) : (
+              <img
+                src={slide.src}
+                alt=""
+                loading={i === 0 ? "eager" : "lazy"}
+                className="ken-burns size-full object-cover will-change-transform"
+                style={{ animationDelay: `${i * -4.5}s` }}
+              />
+            )}
           </motion.div>
         ))}
       </div>
@@ -277,7 +305,10 @@ export function CinematicHero() {
                         initial={{ width: reduce ? "100%" : "0%" }}
                         animate={{ width: "100%" }}
                         transition={{
-                          duration: reduce || paused ? 0.45 : SLIDE_MS / 1000,
+                          duration:
+                            reduce || paused
+                              ? 0.45
+                              : (SLIDES[active].hold ?? SLIDE_MS) / 1000,
                           ease: "linear",
                         }}
                       />

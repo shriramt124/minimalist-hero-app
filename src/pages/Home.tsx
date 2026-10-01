@@ -1,4 +1,5 @@
 import { CinematicHero } from "@/components/site/CinematicHero";
+import { FeaturedFilm, FilmCard } from "@/components/site/FilmPlayer";
 import { FilterChips } from "@/components/site/FilterChips";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { ProjectCard } from "@/components/site/ProjectCard";
@@ -11,6 +12,8 @@ import {
 } from "@/components/site/primitives";
 import { Eyebrow, Reveal } from "@/components/site/Reveal";
 import {
+  FEATURED_FILM,
+  FILMS,
   FOUNDER_PORTRAIT,
   INSTAGRAM_FEED,
   PROCESS,
@@ -160,6 +163,46 @@ function FeaturedProjects() {
   );
 }
 
+function StudioFilms() {
+  return (
+    <Section id="films" className="scroll-mt-24 border-t border-border">
+      <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+        <SectionHeading
+          index="02"
+          eyebrow="Studio Films"
+          title={
+            <>
+              Our work,{" "}
+              <span className="font-display italic text-gold">in motion.</span>
+            </>
+          }
+          description="Walk through recent homes and interiors the way a client does — quiet camera work, warm light and the small details that only show up on film."
+        />
+        <Reveal delay={0.1} className="shrink-0">
+          <GhostButton to="/films">
+            Watch all films
+            <ArrowRight className="size-4" />
+          </GhostButton>
+        </Reveal>
+      </div>
+
+      <Reveal delay={0.1} className="mt-12">
+        <FeaturedFilm film={FEATURED_FILM} />
+      </Reveal>
+
+      <div className="mt-10 grid gap-8 sm:grid-cols-3">
+        {FILMS.filter((film) => !film.featured)
+          .slice(0, 3)
+          .map((film, i) => (
+            <Reveal key={film.slug} delay={i * 0.07}>
+              <FilmCard film={film} />
+            </Reveal>
+          ))}
+      </div>
+    </Section>
+  );
+}
+
 function FounderStory() {
   return (
     <Section className="border-t border-border bg-taupe">
@@ -185,7 +228,7 @@ function FounderStory() {
 
         <div>
           <Reveal>
-            <Eyebrow index="02">The Studio</Eyebrow>
+            <Eyebrow index="03">The Studio</Eyebrow>
           </Reveal>
           <Reveal delay={0.06}>
             <h2 className="mt-6 text-3xl font-medium leading-[1.15] tracking-[-0.02em] text-balance sm:text-4xl">
@@ -245,7 +288,7 @@ function StudioGallery() {
       <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <div>
           <SectionHeading
-            index="03"
+            index="04"
             eyebrow="Inside the Studio"
             title={
               <>
@@ -309,7 +352,7 @@ function ServicesPreview() {
   return (
     <Section id="services" className="border-t border-border">
       <SectionHeading
-        index="04"
+        index="05"
         eyebrow="What We Do"
         title={
           <>
@@ -364,7 +407,7 @@ function ProcessPreview() {
     <Section className="border-t border-border bg-taupe">
       <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
         <SectionHeading
-          index="05"
+          index="06"
           eyebrow="The Process"
           title={
             <>
@@ -410,7 +453,7 @@ function Testimonials() {
   return (
     <Section className="border-t border-border">
       <SectionHeading
-        index="06"
+        index="07"
         eyebrow="Kind Words"
         title={
           <>
@@ -448,7 +491,7 @@ function InstagramStrip() {
     <Section className="border-t border-border bg-taupe">
       <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
         <SectionHeading
-          index="07"
+          index="08"
           eyebrow="Latest Works"
           title={
             <>
@@ -536,7 +579,7 @@ function ContactSection() {
       <Container className="relative py-20 sm:py-28">
         <div className="mx-auto max-w-3xl text-center">
           <Reveal>
-            <Eyebrow index="08" className="justify-center">
+            <Eyebrow index="09" className="justify-center">
               Begin
             </Eyebrow>
           </Reveal>
@@ -654,6 +697,7 @@ export default function Home() {
       <CinematicHero />
       <StatsBar />
       <FeaturedProjects />
+      <StudioFilms />
       <FounderStory />
       <StudioGallery />
       <ServicesPreview />

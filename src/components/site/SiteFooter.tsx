@@ -12,6 +12,7 @@ import { Link } from "react-router";
 const quickLinks = [
   { label: "Studio", to: "/about" },
   { label: "Projects", to: "/projects" },
+  { label: "Films", to: "/films" },
   { label: "Services", to: "/services" },
   { label: "Process", to: "/process" },
   { label: "Contact", to: "/contact" },
