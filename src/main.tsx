@@ -10,7 +10,18 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
 
 // Lazy load route components for better code splitting
-const Landing = lazy(() => import("./pages/Landing.tsx"));
+const SiteLayout = lazy(() =>
+  import("./components/site/SiteLayout.tsx").then((m) => ({
+    default: m.SiteLayout,
+  })),
+);
+const Home = lazy(() => import("./pages/Home.tsx"));
+const About = lazy(() => import("./pages/About.tsx"));
+const Projects = lazy(() => import("./pages/Projects.tsx"));
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail.tsx"));
+const Services = lazy(() => import("./pages/Services.tsx"));
+const Process = lazy(() => import("./pages/Process.tsx"));
+const Contact = lazy(() => import("./pages/Contact.tsx"));
 const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
@@ -119,7 +130,15 @@ createRoot(document.getElementById("root")!).render(
           <RouteSyncer />
           <Suspense fallback={<RouteLoading />}>
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route element={<SiteLayout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/:slug" element={<ProjectDetail />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/process" element={<Process />} />
+                <Route path="/contact" element={<Contact />} />
+              </Route>
               <Route
                 path="/auth"
                 element={<AuthPage redirectAfterAuth="/dashboard" />}
@@ -127,7 +146,10 @@ createRoot(document.getElementById("root")!).render(
               <Route
                 path="/dashboard"
                 element={
-                  <RequireAuth>
+                  <RequireAuth
+                    title="Sign in to your client portal"
+                    description="Track your project's progress, review drawings and message the studio."
+                  >
                     <Dashboard />
                   </RequireAuth>
                 }

@@ -32,12 +32,16 @@ const schema = defineSchema(
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
-    // add other tables here
-
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    // Design enquiries submitted from the public contact page.
+    inquiries: defineTable({
+      name: v.string(),
+      email: v.string(),
+      phone: v.optional(v.string()),
+      projectType: v.optional(v.string()),
+      location: v.optional(v.string()),
+      budget: v.optional(v.string()),
+      message: v.string(),
+    }).index("by_email", ["email"]),
   },
   {
     schemaValidation: false,

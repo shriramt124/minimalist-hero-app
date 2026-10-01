@@ -42,85 +42,160 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* HM DESIGNZ brand tokens — gold, warm neutrals, display type */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+
+  --color-gold: #c9a86a;
+  --color-gold-soft: #e3cfa4;
+  --color-gold-deep: #9c7f45;
+  --color-champagne: #e8dcc4;
+  --color-beige: #cdbfa7;
+  --color-terracotta: #b5744f;
+  --color-espresso: #2a241c;
+  --color-ink: #0f0f0f;
+  --color-taupe: #16130f;
+}
+
 /* CHANGE VALUES FOR THEME */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+  --background: #0f0f0f;
+  --foreground: #f5f5f0;
+  --card: #161513;
+  --card-foreground: #f5f5f0;
+  --popover: #171614;
+  --popover-foreground: #f5f5f0;
+  --primary: #c9a86a;
+  --primary-foreground: #171207;
+  --secondary: #1d1a16;
+  --secondary-foreground: #ece7dc;
+  --muted: #1a1917;
+  --muted-foreground: #a39f96;
+  --accent: #241f18;
+  --accent-foreground: #f0e5cf;
+  --destructive: #c96a5a;
+  --border: rgba(245, 245, 240, 0.1);
+  --input: rgba(245, 245, 240, 0.14);
+  --ring: #c9a86a;
+  --chart-1: #c9a86a;
+  --chart-2: #b5744f;
+  --chart-3: #8f8a7d;
+  --chart-4: #e3cfa4;
+  --chart-5: #6f7a6a;
+  --sidebar: #141312;
+  --sidebar-foreground: #f5f5f0;
+  --sidebar-primary: #c9a86a;
+  --sidebar-primary-foreground: #171207;
+  --sidebar-accent: #241f18;
+  --sidebar-accent-foreground: #f0e5cf;
+  --sidebar-border: rgba(245, 245, 240, 0.1);
+  --sidebar-ring: #c9a86a;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0f0f0f;
+  --foreground: #f5f5f0;
+  --card: #161513;
+  --card-foreground: #f5f5f0;
+  --popover: #171614;
+  --popover-foreground: #f5f5f0;
+  --primary: #c9a86a;
+  --primary-foreground: #171207;
+  --secondary: #1d1a16;
+  --secondary-foreground: #ece7dc;
+  --muted: #1a1917;
+  --muted-foreground: #a39f96;
+  --accent: #241f18;
+  --accent-foreground: #f0e5cf;
+  --destructive: #c96a5a;
+  --border: rgba(245, 245, 240, 0.1);
+  --input: rgba(245, 245, 240, 0.14);
+  --ring: #c9a86a;
+  --sidebar: #141312;
+  --sidebar-foreground: #f5f5f0;
+  --sidebar-primary: #c9a86a;
+  --sidebar-primary-foreground: #171207;
+  --sidebar-accent: #241f18;
+  --sidebar-accent-foreground: #f0e5cf;
+  --sidebar-border: rgba(245, 245, 240, 0.1);
+  --sidebar-ring: #c9a86a;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
   button:not([disabled]),
   [role="button"]:not([disabled]) {
     cursor: pointer;
   }
+  ::selection {
+    background: rgba(201, 168, 106, 0.28);
+    color: #f5f5f0;
+  }
+}
+
+@layer utilities {
+  /* Instagram-ring gradient used sparingly for accents */
+  .ig-ring {
+    background: conic-gradient(
+      from 180deg at 50% 50%,
+      #c9a86a,
+      #b5744f,
+      #8a5a8f,
+      #5f6d8c,
+      #b5744f,
+      #c9a86a
+    );
+  }
+  .text-gradient-gold {
+    background: linear-gradient(100deg, #f0e5cf, #c9a86a 45%, #b5744f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hairline {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(201, 168, 106, 0.5),
+      transparent
+    );
+  }
+  .card-sheen {
+    background:
+      radial-gradient(
+        120% 140% at 100% 0%,
+        rgba(201, 168, 106, 0.1),
+        transparent 55%
+      ),
+      linear-gradient(180deg, #191815, #121110);
+  }
+}
+
+/* Custom scrollbar — quiet and warm */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2721;
+  border-radius: 999px;
+  border: 2px solid #0f0f0f;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #403a2d;
 }
