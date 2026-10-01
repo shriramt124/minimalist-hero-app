@@ -1,3 +1,4 @@
+import { CinematicHero } from "@/components/site/CinematicHero";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import {
   Container,
@@ -25,11 +26,8 @@ import {
   Quote,
   Sparkles,
 } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router";
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80";
 const STUDIO_IMAGE =
   "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=80";
 
@@ -41,97 +39,6 @@ const SERVICE_ICONS: Record<string, typeof Compass> = {
   kitchen: Sparkles,
   vastu: Compass,
 };
-
-function Hero() {
-  const reduce = useReducedMotion();
-  return (
-    <section className="relative isolate -mt-[74px] flex min-h-[100vh] items-center overflow-hidden pt-[74px]">
-      <motion.div
-        aria-hidden="true"
-        initial={reduce ? undefined : { scale: 1.12, opacity: 0 }}
-        animate={reduce ? undefined : { scale: 1, opacity: 1 }}
-        transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute inset-0 -z-10"
-      >
-        <img
-          src={HERO_IMAGE}
-          alt=""
-          className="size-full object-cover"
-        />
-      </motion.div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-background/40"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-background/90 via-background/40 to-transparent"
-      />
-
-      <Container className="relative py-28">
-        <div className="max-w-3xl">
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0, y: 18 }}
-            animate={reduce ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center gap-3"
-          >
-            <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-black/30 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.28em] text-gold-soft backdrop-blur">
-              <span className="size-1.5 rounded-full bg-gold" />
-              Architecture & Interiors · Indore
-            </span>
-          </motion.div>
-
-          <motion.h1
-            initial={reduce ? undefined : { opacity: 0, y: 24 }}
-            animate={reduce ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
-            className="mt-8 text-4xl font-medium leading-[1.06] tracking-[-0.03em] text-balance sm:text-6xl lg:text-[4.25rem]"
-          >
-            Homes that feel like you,
-            <span className="block font-display italic text-gradient-gold">
-              designed to stay that way.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={reduce ? undefined : { opacity: 0, y: 24 }}
-            animate={reduce ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
-            className="mt-7 max-w-xl text-base leading-8 text-foreground/75 sm:text-lg"
-          >
-            {STUDIO.name} is an Indore-based design studio creating unique
-            architectural and interior solutions — modern, warm and quietly
-            Vastu-aligned. Thoughtful design, made personal.
-          </motion.p>
-
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0, y: 24 }}
-            animate={reduce ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.24 }}
-            className="mt-10 flex flex-col gap-3 sm:flex-row"
-          >
-            <GoldButton to="/projects">
-              Explore Projects
-              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </GoldButton>
-            <GhostButton to="/contact" className="border-white/25 bg-black/20 backdrop-blur">
-              Start Your Journey
-            </GhostButton>
-          </motion.div>
-        </div>
-      </Container>
-
-      {/* Scroll cue */}
-      <div className="pointer-events-none absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex">
-        <span className="text-[10px] uppercase tracking-[0.32em] text-foreground/50">
-          Scroll
-        </span>
-        <span className="h-10 w-px bg-gradient-to-b from-gold/70 to-transparent" />
-      </div>
-    </section>
-  );
-}
 
 function StatsBar() {
   return (
@@ -156,7 +63,7 @@ function StatsBar() {
 
 function FeaturedProjects() {
   return (
-    <Section id="work">
+    <Section id="work" className="scroll-mt-24">
       <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
         <SectionHeading
           index="01"
@@ -558,7 +465,7 @@ function FinalCTA() {
 export default function Home() {
   return (
     <>
-      <Hero />
+      <CinematicHero />
       <StatsBar />
       <FeaturedProjects />
       <FounderStory />
