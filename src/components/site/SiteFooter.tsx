@@ -1,13 +1,27 @@
 import { Logo } from "@/components/site/Logo";
-import { Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import {
+  ArrowUpRight,
+  Instagram,
+  Mail,
+  MapPin,
+  Phone,
+  Youtube,
+} from "lucide-react";
 import { Link } from "react-router";
 
-const explore = [
+const quickLinks = [
   { label: "Studio", to: "/about" },
   { label: "Projects", to: "/projects" },
   { label: "Services", to: "/services" },
   { label: "Process", to: "/process" },
   { label: "Contact", to: "/contact" },
+];
+
+const serviceLinks = [
+  { label: "Architecture", to: "/services" },
+  { label: "Interior Design", to: "/services" },
+  { label: "Modular Kitchen", to: "/services" },
+  { label: "Vastu Planning", to: "/services" },
 ];
 
 export function SiteFooter() {
@@ -18,43 +32,61 @@ export function SiteFooter() {
         className="pointer-events-none absolute -top-32 right-0 size-[420px] rounded-full bg-gold/5 blur-[120px]"
       />
       <div className="relative mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.6fr_1fr_1fr_1.1fr]">
+          {/* Brand + social */}
           <div className="max-w-sm">
             <Logo />
             <p className="mt-6 text-sm leading-7 text-muted-foreground">
-              {`Creating unique architectural and interior solutions through thoughtful design — rooted in Indore, warm to live in, and made to last.`}
+              Creating unique architectural and interior solutions through
+              thoughtful design — rooted in Indore, warm to live in, and made to
+              last.
             </p>
-            <div className="mt-7 flex items-center gap-3">
+
+            <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground">
+              Follow the studio
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <a
                 href="https://instagram.com/hmdesignz"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="group relative inline-flex size-11 items-center justify-center rounded-full border border-border transition-colors hover:border-transparent"
+                aria-label="HM DESIGNZ on Instagram"
+                className="group inline-flex items-center gap-3 rounded-full border border-border bg-background/40 px-4 py-2.5 transition-colors hover:border-gold/50"
               >
-                <span className="absolute inset-0 rounded-full ig-ring opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="absolute inset-[1.5px] rounded-full bg-taupe" />
-                <Instagram className="relative size-4 text-foreground" />
+                <span className="relative flex size-8 items-center justify-center">
+                  <span className="absolute inset-0 rounded-full ig-ring" />
+                  <span className="absolute inset-[2px] rounded-full bg-background" />
+                  <Instagram className="relative size-4 text-foreground" />
+                </span>
+                <span className="text-sm text-foreground/85 transition-colors group-hover:text-gold">
+                  @hmdesignz
+                </span>
               </a>
               <a
                 href="https://youtube.com/@hmdesignz"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-gold/50 hover:text-foreground"
+                aria-label="HM DESIGNZ on YouTube"
+                className="group inline-flex items-center gap-3 rounded-full border border-border bg-background/40 px-4 py-2.5 transition-colors hover:border-gold/50"
               >
-                <Youtube className="size-4 text-gold" />
-                Watch the studio
+                <span className="inline-flex size-8 items-center justify-center rounded-full bg-terracotta/15">
+                  <Youtube className="size-4 text-gold" />
+                </span>
+                <span className="text-sm text-foreground/85 transition-colors group-hover:text-gold">
+                  Watch the studio
+                </span>
               </a>
             </div>
           </div>
 
-          <div>
+          {/* Quick links */}
+          <nav aria-label="Quick links">
             <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground">
               Explore
             </p>
             <ul className="mt-5 space-y-3">
-              {explore.map((item) => (
-                <li key={item.to}>
+              {quickLinks.map((item) => (
+                <li key={item.label}>
                   <Link
                     to={item.to}
                     className="text-sm text-foreground/80 transition-colors hover:text-gold"
@@ -64,8 +96,28 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
+          {/* Services */}
+          <nav aria-label="Services">
+            <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground">
+              Services
+            </p>
+            <ul className="mt-5 space-y-3">
+              {serviceLinks.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    to={item.to}
+                    className="text-sm text-foreground/80 transition-colors hover:text-gold"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Studio */}
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground">
               Studio
@@ -96,6 +148,15 @@ export function SiteFooter() {
                 >
                   studio@hmdesignz.in
                 </a>
+              </li>
+              <li>
+                <Link
+                  to="/auth?returnTo=%2Fdashboard"
+                  className="group inline-flex items-center gap-1.5 text-sm text-foreground/80 transition-colors hover:text-gold"
+                >
+                  Client Portal
+                  <ArrowUpRight className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
               </li>
             </ul>
           </div>

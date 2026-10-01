@@ -181,6 +181,26 @@
       ),
       linear-gradient(180deg, #191815, #121110);
   }
+  /* Slow, endless Ken Burns drift for the hero slideshow */
+  .ken-burns {
+    transform: scale(1.03);
+    transform-origin: center;
+  }
+}
+
+@keyframes hm-ken-burns {
+  from {
+    transform: scale(1.03);
+  }
+  to {
+    transform: scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ken-burns {
+    animation: hm-ken-burns 22s ease-in-out infinite alternate;
+  }
 }
 
 /* Custom scrollbar — quiet and warm */

@@ -618,11 +618,13 @@ function ContactSection() {
                     Message on WhatsApp
                   </a>
                   <a
-                    href="#contact"
+                    href={STUDIO.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-border text-sm font-medium transition-colors hover:border-gold/50 hover:text-gold"
                   >
                     <Instagram className="size-4 text-gold" />
-                    Follow the studio
+                    Follow on Instagram
                   </a>
                 </div>
               </div>

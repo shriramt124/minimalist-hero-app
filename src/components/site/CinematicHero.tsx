@@ -15,8 +15,6 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const SLIDE_MS = 6800;
 /** Crossfade length — long enough to read as a dissolve, not a cut. */
 const FADE_S = 2.4;
-/** Ken Burns runs longer than a slide so the zoom never visibly stalls. */
-const KEN_BURNS_S = 15;
 
 /**
  * Optionally drop a muted background video here and it will play behind the
@@ -69,7 +67,12 @@ const captionContainer: Variants = {
 };
 
 const captionItem: Variants = {
-  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  hidden: {
+    opacity: 0,
+    y: 14,
+    filter: "blur(6px)",
+    transition: { duration: 0.4, ease: "easeIn" },
+  },
   show: {
     opacity: 1,
     y: 0,
@@ -103,7 +106,7 @@ export function CinematicHero() {
     <section
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="relative isolate -mt-[74px] flex min-h-[100svh] flex-col overflow-hidden pt-[74px] md:pt-[74px]"
+      className="relative isolate -mt-[74px] flex min-h-[100svh] flex-col overflow-hidden pt-[74px]"
     >
       {/* --- Layered slideshow: slow dissolve + continuous Ken Burns drift --- */}
       <div aria-hidden="true" className="absolute inset-0 -z-20 bg-ink">
@@ -125,13 +128,12 @@ export function CinematicHero() {
             animate={{ opacity: i === active ? 1 : 0 }}
             transition={{ duration: reduce ? 0.6 : FADE_S, ease: "easeInOut" }}
           >
-            <motion.img
+            <img
               src={slide.src}
               alt=""
-              className="size-full object-cover will-change-transform"
-              initial={{ scale: reduce ? 1.04 : 1.03 }}
-              animate={reduce ? undefined : { scale: 1.16 }}
-              transition={{ duration: KEN_BURNS_S, ease: "linear" }}
+              loading={i === 0 ? "eager" : "lazy"}
+              className="ken-burns size-full object-cover will-change-transform"
+              style={{ animationDelay: `${i * -4.5}s` }}
             />
           </motion.div>
         ))}
