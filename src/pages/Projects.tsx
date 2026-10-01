@@ -1,9 +1,9 @@
+import { FilterChips } from "@/components/site/FilterChips";
 import { PageHero } from "@/components/site/PageHero";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { Container, Section } from "@/components/site/primitives";
 import { Reveal } from "@/components/site/Reveal";
 import { PROJECTS, PROJECT_CATEGORIES } from "@/lib/studio";
-import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
@@ -45,34 +45,14 @@ export default function Projects() {
       />
 
       <Section className="pt-12 sm:pt-16">
-        <div className="flex flex-wrap items-center gap-2.5">
-          {PROJECT_CATEGORIES.map((category) => {
-            const active = category === filter;
-            return (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setFilter(category)}
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[13px] font-medium transition-all duration-300",
-                  active
-                    ? "border-gold/60 bg-gold/10 text-gold"
-                    : "border-border text-muted-foreground hover:border-gold/40 hover:text-foreground",
-                )}
-              >
-                {category}
-                <span
-                  className={cn(
-                    "text-[11px]",
-                    active ? "text-gold/70" : "text-muted-foreground/60",
-                  )}
-                >
-                  {counts.get(category)}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <Reveal>
+          <FilterChips
+            categories={PROJECT_CATEGORIES}
+            active={filter}
+            counts={counts}
+            onChange={setFilter}
+          />
+        </Reveal>
 
         <div className="mt-12">
           <AnimatePresence mode="popLayout" initial={false}>

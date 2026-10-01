@@ -1,5 +1,6 @@
 import { Container, GhostButton, GoldButton } from "@/components/site/primitives";
 import {
+  AnimatePresence,
   motion,
   useReducedMotion,
   useScroll,
@@ -10,7 +11,12 @@ import { ArrowDown, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const SLIDE_MS = 6500;
+/** Time a slide holds before the next crossfade begins. */
+const SLIDE_MS = 6800;
+/** Crossfade length — long enough to read as a dissolve, not a cut. */
+const FADE_S = 2.4;
+/** Ken Burns runs longer than a slide so the zoom never visibly stalls. */
+const KEN_BURNS_S = 15;
 
 /**
  * Optionally drop a muted background video here and it will play behind the
@@ -44,18 +50,35 @@ const SLIDES = [
 
 const copyContainer: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
+  show: { transition: { staggerChildren: 0.14, delayChildren: 0.45 } },
 };
 
 const copyItem: Variants = {
-  hidden: { opacity: 0, y: 28, filter: "blur(10px)" },
+  hidden: { opacity: 0, y: 30, filter: "blur(12px)" },
   show: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { duration: 1, ease: EASE },
+    transition: { duration: 1.15, ease: EASE },
   },
 };
+
+const captionContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+const captionItem: Variants = {
+  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.75, ease: EASE },
+  },
+};
+
+const pad = (n: number) => String(n + 1).padStart(2, "0");
 
 export function CinematicHero() {
   const reduce = useReducedMotion();
@@ -80,10 +103,10 @@ export function CinematicHero() {
     <section
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="relative isolate -mt-[74px] flex min-h-[100svh] flex-col overflow-hidden pt-[74px]"
+      className="relative isolate -mt-[74px] flex min-h-[100svh] flex-col overflow-hidden pt-[74px] md:pt-[74px]"
     >
-      {/* --- Layered slideshow with slow Ken Burns zoom --- */}
-      <div aria-hidden="true" className="absolute inset-0 -z-20">
+      {/* --- Layered slideshow: slow dissolve + continuous Ken Burns drift --- */}
+      <div aria-hidden="true" className="absolute inset-0 -z-20 bg-ink">
         {HERO_VIDEO && (
           <video
             className="absolute inset-0 size-full object-cover"
@@ -100,15 +123,15 @@ export function CinematicHero() {
             className="absolute inset-0"
             initial={false}
             animate={{ opacity: i === active ? 1 : 0 }}
-            transition={{ duration: 1.8, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: reduce ? 0.6 : FADE_S, ease: "easeInOut" }}
           >
             <motion.img
               src={slide.src}
               alt=""
-              className="size-full object-cover"
-              initial={false}
-              animate={reduce ? undefined : { scale: i === active ? 1.14 : 1.02 }}
-              transition={{ duration: 9.5, ease: "linear" }}
+              className="size-full object-cover will-change-transform"
+              initial={{ scale: reduce ? 1.04 : 1.03 }}
+              animate={reduce ? undefined : { scale: 1.16 }}
+              transition={{ duration: KEN_BURNS_S, ease: "linear" }}
             />
           </motion.div>
         ))}
@@ -128,7 +151,7 @@ export function CinematicHero() {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55))]"
       />
 
-      {/* --- Copy --- */}
+      {/* --- Copy: soft blur-to-focus fade on load --- */}
       <motion.div
         style={reduce ? undefined : { y: contentY, opacity: contentOpacity }}
         className="relative flex flex-1 items-center"
@@ -188,50 +211,77 @@ export function CinematicHero() {
       {/* --- Bottom bar: slide caption, progress, scroll cue --- */}
       <div className="relative">
         <Container className="pb-9">
-          <div className="flex flex-col gap-6 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-7 border-t border-white/10 pt-6 sm:flex-row sm:items-end sm:justify-between">
             {/* Active slide caption */}
-            <div className="min-h-[44px]">
-              <motion.div
-                key={active}
-                initial={reduce ? undefined : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: EASE }}
-              >
-                <p className="text-[10px] uppercase tracking-[0.28em] text-gold">
-                  Now viewing
-                </p>
-                <p className="mt-1.5 text-sm text-foreground/90">
-                  {SLIDES[active].label}
-                  <span className="text-muted-foreground">
-                    {" "}
-                    · {SLIDES[active].location}
-                  </span>
-                </p>
-              </motion.div>
+            <div className="min-h-[62px]">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={active}
+                  variants={captionContainer}
+                  initial={reduce ? undefined : "hidden"}
+                  animate={reduce ? undefined : "show"}
+                  exit={reduce ? undefined : "hidden"}
+                >
+                  <motion.p
+                    variants={captionItem}
+                    className="flex items-center gap-2.5 text-[10px] uppercase tracking-[0.28em] text-gold"
+                  >
+                    <motion.span
+                      className="inline-block h-px bg-gold/70"
+                      initial={reduce ? undefined : { width: 0 }}
+                      animate={{ width: reduce ? 22 : 22 }}
+                      transition={{ duration: 0.7, ease: EASE }}
+                    />
+                    Now viewing
+                  </motion.p>
+                  <motion.p
+                    variants={captionItem}
+                    className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1"
+                  >
+                    <span className="text-base text-foreground/95">
+                      {SLIDES[active].label}
+                    </span>
+                    <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                      {SLIDES[active].location}
+                    </span>
+                  </motion.p>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
-            {/* Progress indicators */}
-            <div className="flex items-center gap-4">
+            {/* Progress indicators + slide counter */}
+            <div className="flex items-center gap-5">
+              <span className="font-display text-sm tabular-nums text-muted-foreground">
+                <span className="text-gold">{pad(active)}</span>
+                <span className="mx-1.5 text-muted-foreground/50">/</span>
+                {pad(SLIDES.length - 1)}
+              </span>
+
               <div className="flex items-center gap-2">
                 {SLIDES.map((slide, i) => (
                   <button
                     key={slide.src}
                     type="button"
                     aria-label={`Show ${slide.label}`}
+                    aria-current={i === active}
                     onClick={() => setActive(i)}
-                    className="group relative h-1 w-10 overflow-hidden rounded-full bg-white/20 transition-colors hover:bg-white/35"
+                    className="group relative h-1.5 overflow-hidden rounded-full bg-white/20 transition-[width,background-color] duration-500 ease-out hover:bg-white/35"
+                    style={{ width: i === active ? "3.5rem" : "2.25rem" }}
                   >
                     {i === active && (
                       <motion.span
                         key={active}
                         className="absolute inset-y-0 left-0 rounded-full bg-gold"
-                        initial={{ width: reduce ? "100%" : 0 }}
+                        initial={{ width: reduce ? "100%" : "0%" }}
                         animate={{ width: "100%" }}
                         transition={{
-                          duration: reduce || paused ? 0.4 : SLIDE_MS / 1000,
+                          duration: reduce || paused ? 0.45 : SLIDE_MS / 1000,
                           ease: "linear",
                         }}
                       />
+                    )}
+                    {i !== active && (
+                      <span className="absolute inset-0 bg-gold/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                     )}
                   </button>
                 ))}
@@ -241,7 +291,7 @@ export function CinematicHero() {
               <a
                 href="#work"
                 aria-label="Scroll to projects"
-                className="hidden items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-foreground/50 transition-colors hover:text-gold sm:inline-flex"
+                className="hidden items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-foreground/50 transition-colors hover:text-gold lg:inline-flex"
               >
                 Scroll
                 <motion.span
