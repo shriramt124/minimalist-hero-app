@@ -669,6 +669,18 @@ export const FILMS: Film[] = [
   },
 ];
 
+/**
+ * Opening title sequence.
+ *
+ * Plays once when a visitor first lands on the site (as a full-screen intro
+ * overlay), then never again for the session. Swap `src` for the studio's own
+ * title film; `poster` is the still shown while it buffers.
+ */
+export const LAUNCH_FILM: { src: string; poster: string } = {
+  src: clip("TearsOfSteel.mp4"),
+  poster: img("photo-1600585154340-be6161a56a0c", 2400),
+};
+
 export const FEATURED_FILM: Film = FILMS.find((f) => f.featured) ?? FILMS[0];
 
 export function getFilm(slug: string): Film | undefined {
