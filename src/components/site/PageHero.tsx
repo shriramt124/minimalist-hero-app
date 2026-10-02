@@ -1,4 +1,5 @@
 import { Container } from "@/components/site/primitives";
+import { ParallaxImage } from "@/components/site/Parallax";
 import { Eyebrow, Reveal } from "@/components/site/Reveal";
 import type { ReactNode } from "react";
 
@@ -18,18 +19,17 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <section className="relative isolate -mt-[74px] overflow-hidden border-b border-border pt-[74px]">
+    <section className="relative isolate -mt-[92px] sm:-mt-[104px] overflow-hidden border-b border-border pt-[92px] sm:pt-[104px]">
       {image ? (
         <>
-          <img
+          <ParallaxImage
             src={image}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 -z-10 size-full object-cover"
+            strength={10}
+            className="absolute inset-0 -z-10"
           />
           <div
             aria-hidden="true"
-            className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-background/55"
+            className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/80 to-background/50"
           />
         </>
       ) : (

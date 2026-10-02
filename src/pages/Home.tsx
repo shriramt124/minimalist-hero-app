@@ -1,18 +1,16 @@
 import { CinematicHero } from "@/components/site/CinematicHero";
-import { FeaturedFilm, FilmCard } from "@/components/site/FilmPlayer";
-import { FilterChips } from "@/components/site/FilterChips";
+import { StackedFilms } from "@/components/site/StackedFilms";
 import { InquiryForm } from "@/components/site/InquiryForm";
-import { ProjectCard } from "@/components/site/ProjectCard";
+import { ProjectIndex } from "@/components/site/ProjectIndex";
 import {
   Container,
   GhostButton,
-  GoldButton,
   Section,
   SectionHeading,
 } from "@/components/site/primitives";
+import { ParallaxImage, ParallaxLayer } from "@/components/site/Parallax";
 import { Eyebrow, Reveal } from "@/components/site/Reveal";
 import {
-  FEATURED_FILM,
   FILMS,
   FOUNDER_PORTRAIT,
   INSTAGRAM_FEED,
@@ -26,40 +24,10 @@ import {
 } from "@/lib/studio";
 import {
   ArrowRight,
-  Clock,
-  Compass,
   Instagram,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Phone,
   Quote,
-  Sparkles,
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
 import { Link } from "react-router";
-
-const STUDIO_IMAGE =
-  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=80";
-
-const SERVICE_ICONS: Record<string, typeof Compass> = {
-  architecture: Compass,
-  interior: Sparkles,
-  furniture: Sparkles,
-  renovation: Compass,
-  kitchen: Sparkles,
-  vastu: Compass,
-};
-
-/** A trimmed set of disciplines for the homepage grid. */
-const HOME_CATEGORIES = [
-  "All",
-  "Residential",
-  "Commercial",
-  "Interior",
-] as const;
-type HomeFilter = (typeof HOME_CATEGORIES)[number];
 
 function StatsBar() {
   return (
@@ -83,29 +51,6 @@ function StatsBar() {
 }
 
 function FeaturedProjects() {
-  const [filter, setFilter] = useState<HomeFilter>("All");
-
-  const filtered = useMemo(
-    () =>
-      filter === "All"
-        ? PROJECTS
-        : PROJECTS.filter((p) => p.category === filter),
-    [filter],
-  );
-
-  const counts = useMemo(() => {
-    const map = new Map<HomeFilter, number>();
-    HOME_CATEGORIES.forEach((category) => {
-      map.set(
-        category,
-        category === "All"
-          ? PROJECTS.length
-          : PROJECTS.filter((p) => p.category === category).length,
-      );
-    });
-    return map;
-  }, []);
-
   return (
     <Section id="work" className="scroll-mt-24">
       <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
@@ -134,31 +79,9 @@ function FeaturedProjects() {
         </Reveal>
       </div>
 
-      <Reveal delay={0.12} className="mt-10">
-        <FilterChips
-          categories={HOME_CATEGORIES}
-          active={filter}
-          counts={counts}
-          onChange={setFilter}
-        />
+      <Reveal delay={0.1} className="mt-14">
+        <ProjectIndex projects={PROJECTS.slice(0, 6)} />
       </Reveal>
-
-      <div className="mt-12">
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={filter}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {filtered.map((project) => (
-              <ProjectCard key={project.slug} project={project} />
-            ))}
-          </motion.div>
-        </AnimatePresence>
-      </div>
     </Section>
   );
 }
@@ -186,18 +109,8 @@ function StudioFilms() {
         </Reveal>
       </div>
 
-      <Reveal delay={0.1} className="mt-12">
-        <FeaturedFilm film={FEATURED_FILM} />
-      </Reveal>
-
-      <div className="mt-10 grid gap-8 sm:grid-cols-3">
-        {FILMS.filter((film) => !film.featured)
-          .slice(0, 3)
-          .map((film, i) => (
-            <Reveal key={film.slug} delay={i * 0.07}>
-              <FilmCard film={film} />
-            </Reveal>
-          ))}
+      <div className="mt-12">
+        <StackedFilms films={FILMS.slice(0, 4)} />
       </div>
     </Section>
   );
@@ -210,12 +123,12 @@ function FounderStory() {
         <Reveal>
           <div className="relative">
             <div className="relative overflow-hidden rounded-2xl border border-border">
-              <img
+              <ParallaxImage
                 src={FOUNDER_PORTRAIT}
                 alt={`${STUDIO.founder}, founder of ${STUDIO.name}`}
-                className="aspect-[4/5] w-full object-cover"
+                strength={8}
+                className="aspect-[4/5] w-full"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
             <div className="absolute -bottom-6 -right-4 hidden w-52 rounded-2xl border border-border bg-background/90 p-5 backdrop-blur sm:block">
               <p className="font-display text-3xl italic text-gold">Harish</p>
@@ -305,8 +218,8 @@ function StudioGallery() {
             <div className="mt-8 flex flex-wrap gap-3">
               {[
                 "Timber",
-                "Travertine",
-                "Terracotta",
+                "Marble",
+                "Concrete texture",
                 "Brass",
                 "Lime plaster",
                 "Glass",
@@ -321,28 +234,30 @@ function StudioGallery() {
             </div>
           </Reveal>
         </div>
-        <Reveal delay={0.1}>
-          <div className="grid grid-cols-2 gap-4">
-            <img
-              src={STUDIO_IMAGE}
-              alt="Warm interior detail"
-              loading="lazy"
-              className="col-span-2 aspect-[16/10] w-full rounded-2xl border border-border object-cover"
+        <div className="grid grid-cols-2 gap-3 sm:gap-5">
+          <ParallaxLayer distance={40} className="space-y-3 sm:space-y-5">
+            <ParallaxImage
+              src="/studio/office-1.webp"
+              alt="HM DESIGNZ studio — timber slat wall and marble desk"
+              strength={7}
+              className="aspect-[9/16] w-full rounded-2xl"
             />
-            <img
-              src="https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=1000&q=80"
-              alt="Bedroom interior"
-              loading="lazy"
-              className="aspect-[4/5] w-full rounded-2xl border border-border object-cover"
+          </ParallaxLayer>
+          <ParallaxLayer distance={-30} className="space-y-3 pt-10 sm:space-y-5 sm:pt-16">
+            <ParallaxImage
+              src="/studio/office-2.webp"
+              alt="Studio entry console with brass frame and compass clock"
+              strength={7}
+              className="aspect-[4/5] w-full rounded-2xl"
             />
-            <img
-              src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?auto=format&fit=crop&w=1000&q=80"
-              alt="Modular kitchen interior"
-              loading="lazy"
-              className="aspect-[4/5] w-full rounded-2xl border border-border object-cover"
+            <ParallaxImage
+              src="/studio/office-3.webp"
+              alt="Hanging shelf on lime-plaster wall"
+              strength={7}
+              className="aspect-[4/5] w-full rounded-2xl"
             />
-          </div>
-        </Reveal>
+          </ParallaxLayer>
+        </div>
       </div>
     </Section>
   );
@@ -370,15 +285,14 @@ function ServicesPreview() {
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {SERVICES.map((service, i) => {
-          const Icon = SERVICE_ICONS[service.icon] ?? Compass;
           return (
             <Reveal key={service.slug} delay={(i % 3) * 0.08}>
               <Link
                 to="/services"
                 className="group relative flex h-full flex-col rounded-2xl border border-border card-sheen p-7 transition-all duration-500 hover:-translate-y-1 hover:border-gold/40"
               >
-                <span className="inline-flex size-11 items-center justify-center rounded-xl border border-gold/30 bg-gold/10 text-gold">
-                  <Icon className="size-5" />
+                <span className="font-display text-3xl italic tabular-nums text-gold">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <h3 className="mt-6 text-lg font-medium tracking-tight">
                   {service.title}
@@ -544,149 +458,109 @@ function InstagramStrip() {
 }
 
 function ContactSection() {
-  const details = [
+  const lines = [
     {
-      icon: MapPin,
-      label: "Studio",
-      value: STUDIO.address,
-      href: "https://maps.google.com/?q=Vijay+Nagar+Indore",
+      label: "WhatsApp",
+      value: "Message the studio",
+      href: `https://wa.me/91${STUDIO.whatsapp.replace(/\D/g, "").slice(-10)}`,
+      external: true,
     },
     {
-      icon: Phone,
       label: "Call",
       value: STUDIO.phone,
       href: `tel:${STUDIO.phone.replace(/\s/g, "")}`,
     },
     {
-      icon: Mail,
       label: "Email",
       value: STUDIO.email,
       href: `mailto:${STUDIO.email}`,
     },
-    {
-      icon: Clock,
-      label: "Hours",
-      value: "Mon–Sat · 10:00 am – 7:00 pm",
-    },
   ];
 
   return (
-    <section id="contact" className="relative scroll-mt-24 overflow-hidden border-t border-border">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-24 left-1/2 size-[520px] -translate-x-1/2 rounded-full bg-gold/10 blur-[140px]"
-      />
-      <Container className="relative py-20 sm:py-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <Reveal>
-            <Eyebrow index="09" className="justify-center">
-              Begin
-            </Eyebrow>
-          </Reveal>
-          <Reveal delay={0.06}>
-            <h2 className="mt-6 text-3xl font-medium leading-[1.12] tracking-[-0.02em] text-balance sm:text-5xl">
-              Let's design a space that feels like{" "}
-              <span className="font-display italic text-gradient-gold">
-                exactly you.
-              </span>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.12}>
-            <p className="mx-auto mt-6 max-w-xl text-[15px] leading-7 text-muted-foreground">
-              Share your plot, your home or just an idea. We'll walk you through
-              how we'd bring it to life — no obligation, just a good
-              conversation.
-            </p>
-          </Reveal>
-        </div>
+    <section id="contact" className="scroll-mt-24 px-3 pb-3 pt-6 sm:px-6 sm:pb-6 sm:pt-10">
+      <div className="relative overflow-hidden rounded-[2rem] bg-taupe sm:rounded-[3rem]">
+        <Container className="relative grid gap-12 py-14 sm:py-20 lg:grid-cols-[1fr_1.05fr] lg:gap-20 lg:py-28">
+          {/* Left: the invitation */}
+          <div className="flex flex-col">
+            <Reveal>
+              <Eyebrow index="09">Begin</Eyebrow>
+            </Reveal>
+            <Reveal delay={0.06}>
+              <h2 className="mt-7 text-[2.75rem] font-medium leading-[0.98] tracking-[-0.04em] sm:text-7xl lg:text-[5.25rem]">
+                Let&apos;s{" "}
+                <span className="font-display italic text-gradient-gold">
+                  talk.
+                </span>
+              </h2>
+            </Reveal>
+            <Reveal delay={0.12}>
+              <p className="mt-6 max-w-md text-[15px] leading-8 text-muted-foreground">
+                Share your plot, your home or just an idea. We&apos;ll walk you
+                through how we&apos;d bring it to life — no obligation, just a
+                good conversation.
+              </p>
+            </Reveal>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
-          <Reveal>
-            <div className="rounded-3xl border border-border card-sheen p-7 sm:p-10">
-              <h3 className="text-2xl font-medium tracking-[-0.01em]">
+            <ul className="mt-10 border-t border-foreground/10">
+              {lines.map((line, i) => (
+                <Reveal as="li" key={line.label} delay={0.1 + i * 0.07}>
+                  <a
+                    href={line.href}
+                    target={line.external ? "_blank" : undefined}
+                    rel={line.external ? "noopener noreferrer" : undefined}
+                    className="group flex items-center justify-between gap-4 border-b border-foreground/10 py-5 transition-colors"
+                  >
+                    <span>
+                      <span className="block text-[11px] uppercase tracking-[0.24em] text-gold">
+                        {line.label}
+                      </span>
+                      <span className="mt-1 block text-lg transition-transform duration-500 group-hover:translate-x-2">
+                        {line.value}
+                      </span>
+                    </span>
+                    <span className="inline-flex size-11 items-center justify-center rounded-full border border-foreground/15 transition-all duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-primary-foreground">
+                      <ArrowRight className="size-4 -rotate-45 transition-transform duration-500 group-hover:rotate-0" />
+                    </span>
+                  </a>
+                </Reveal>
+              ))}
+            </ul>
+
+            <Reveal delay={0.35}>
+              <p className="mt-8 text-sm leading-7 text-muted-foreground">
+                {STUDIO.address}
+                <br />
+                Mon–Sat · 10:00 am – 7:00 pm
+              </p>
+            </Reveal>
+          </div>
+
+          {/* Right: compact form */}
+          <Reveal delay={0.1}>
+            <div className="rounded-[1.75rem] bg-white p-6 shadow-[0_30px_80px_-50px_rgba(42,36,28,0.4)] sm:rounded-[2.25rem] sm:p-10">
+              <h3 className="font-display text-3xl italic sm:text-4xl">
                 Start your project
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                A few lines are enough — we'll take it from there.
+                A few lines are enough — we&apos;ll take it from there.
               </p>
               <div className="mt-8">
                 <InquiryForm compact />
               </div>
+              <p className="mt-6 text-center text-xs text-muted-foreground">
+                Want the full brief?{" "}
+                <Link
+                  to="/contact"
+                  className="text-gold underline-offset-4 hover:underline"
+                >
+                  Open the contact page
+                </Link>
+              </p>
             </div>
           </Reveal>
-
-          <div className="flex flex-col gap-6">
-            <Reveal delay={0.08}>
-              <div className="rounded-3xl border border-border bg-card p-7">
-                <p className="text-[11px] uppercase tracking-[0.24em] text-gold">
-                  Visit the studio
-                </p>
-                <ul className="mt-6 space-y-5">
-                  {details.map((d) => (
-                    <li key={d.label} className="flex gap-4">
-                      <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-background/60 text-gold">
-                        <d.icon className="size-4" />
-                      </span>
-                      <div>
-                        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                          {d.label}
-                        </p>
-                        {d.href ? (
-                          <a
-                            href={d.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-1 block text-sm leading-6 text-foreground transition-colors hover:text-gold"
-                          >
-                            {d.value}
-                          </a>
-                        ) : (
-                          <p className="mt-1 text-sm leading-6 text-foreground">
-                            {d.value}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-7 flex flex-col gap-3 border-t border-border pt-6">
-                  <a
-                    href={`https://wa.me/91${STUDIO.whatsapp.replace(/\D/g, "").slice(-10)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gold text-sm font-medium text-primary-foreground transition-colors hover:bg-gold-soft"
-                  >
-                    <MessageCircle className="size-4" />
-                    Message on WhatsApp
-                  </a>
-                  <a
-                    href={STUDIO.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-border text-sm font-medium transition-colors hover:border-gold/50 hover:text-gold"
-                  >
-                    <Instagram className="size-4 text-gold" />
-                    Follow on Instagram
-                  </a>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.14}>
-              <div className="overflow-hidden rounded-3xl border border-border">
-                <iframe
-                  title="HM DESIGNZ studio location, Indore"
-                  src="https://www.google.com/maps?q=Vijay%20Nagar%2C%20Indore%2C%20Madhya%20Pradesh&output=embed"
-                  className="h-64 w-full grayscale-[35%]"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </Container>
+        </Container>
+      </div>
     </section>
   );
 }

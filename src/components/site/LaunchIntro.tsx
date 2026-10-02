@@ -107,7 +107,7 @@ export function LaunchIntro() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: EASE }}
-          className="fixed inset-0 z-[200] isolate overflow-hidden bg-ink"
+          className="dark fixed inset-0 z-[200] isolate overflow-hidden bg-ink text-foreground"
         >
           {/* Launch film */}
           <div aria-hidden="true" className="absolute inset-0 -z-10">

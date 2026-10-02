@@ -1,3 +1,4 @@
+import { ParallaxImage } from "@/components/site/Parallax";
 import { type Project } from "@/lib/studio";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
@@ -19,20 +20,21 @@ export function ProjectCard({
       )}
     >
       <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[3/4]">
-        <img
+        <ParallaxImage
           src={project.cover}
           alt={project.title}
-          loading="lazy"
-          className="size-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
+          strength={6}
+          className="absolute inset-0"
+          imgClassName="transition-[filter] duration-[900ms] ease-out group-hover:brightness-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent transition-opacity duration-500 group-hover:from-black/90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent transition-opacity duration-500 group-hover:from-black/90" />
 
         <div className="absolute right-4 top-4 flex size-10 translate-y-2 items-center justify-center rounded-full bg-gold text-primary-foreground opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
           <ArrowUpRight className="size-4" />
         </div>
 
         <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-          <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-gold-soft">
+          <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-[#e9dcc0]">
             {project.category} · {project.year}
           </p>
           <h3 className="mt-2 text-xl font-medium tracking-tight text-white sm:text-2xl">

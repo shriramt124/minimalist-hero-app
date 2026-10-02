@@ -1,5 +1,6 @@
-import { FeaturedFilm, FilmCard } from "@/components/site/FilmPlayer";
-import { PageHero } from "@/components/site/PageHero";
+import { StackedFilms } from "@/components/site/StackedFilms";
+import { FilmCard } from "@/components/site/FilmPlayer";
+import { FilmsHero } from "@/components/site/FilmsHero";
 import {
   GhostButton,
   GoldButton,
@@ -15,31 +16,7 @@ const CATEGORIES = Array.from(new Set(FILMS.map((f) => f.category)));
 export default function Films() {
   return (
     <>
-      <PageHero
-        index="Films"
-        eyebrow="Studio Films"
-        title={
-          <>
-            The studio,{" "}
-            <span className="font-display italic text-gradient-gold">
-              in motion.
-            </span>
-          </>
-        }
-        description="Walk through our homes and interiors the way a client does — quiet camera work, warm light and the small details that only show up on film. Every project below is real work from the studio in Indore."
-        image={FEATURED_FILM.poster}
-      >
-        <div className="flex flex-wrap gap-3">
-          {CATEGORIES.map((category) => (
-            <span
-              key={category}
-              className="rounded-full border border-border bg-background/40 px-4 py-2 text-xs text-muted-foreground backdrop-blur"
-            >
-              {category}
-            </span>
-          ))}
-        </div>
-      </PageHero>
+      <FilmsHero film={FEATURED_FILM} categories={CATEGORIES} />
 
       <Section id="reel" className="scroll-mt-24">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
@@ -71,9 +48,9 @@ export default function Films() {
           </Reveal>
         </div>
 
-        <Reveal delay={0.1} className="mt-12">
-          <FeaturedFilm film={FEATURED_FILM} />
-        </Reveal>
+        <div className="mt-12">
+          <StackedFilms films={FILMS.slice(0, 4)} />
+        </div>
       </Section>
 
       <Section className="border-t border-border bg-taupe">

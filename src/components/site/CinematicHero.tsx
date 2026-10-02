@@ -1,78 +1,31 @@
 import { Container, GhostButton, GoldButton } from "@/components/site/primitives";
 import {
-  AnimatePresence,
   motion,
   useReducedMotion,
   useScroll,
   useTransform,
   type Variants,
 } from "framer-motion";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-/** Time a slide holds before the next crossfade begins. */
-const SLIDE_MS = 6800;
-/** Crossfade length — long enough to read as a dissolve, not a cut. */
-const FADE_S = 2.4;
 
 /**
- * Hero background reel. The studio's showreel plays as the opening slide of the
- * crossfade loop, then the stills take over. Point `src` at the studio's own
- * MP4 (or set it to null to run a stills-only hero).
+ * Drop the studio's own film at /public/videos/hero.mp4 (and an optional
+ * /public/videos/hero-poster.jpg) and it plays here automatically. Until then
+ * the hero falls back to the sample clip below.
  */
-const HERO_REEL: { src: string | null; poster: string } = {
-  src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-  poster:
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80",
-};
-
-interface Slide {
-  src: string;
-  label: string;
-  location: string;
-  /** When present the slide plays this muted MP4 instead of a still image. */
-  video?: string;
-  /** Hold time before the next crossfade (defaults to SLIDE_MS). */
-  hold?: number;
-}
-
-const STILL_SLIDES: Slide[] = [
-  {
-    src: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2400&q=80",
-    label: "Noir Penthouse",
-    location: "AB Road, Indore",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&q=80",
-    label: "The Courtyard House",
-    location: "Bicholi Mardana, Indore",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=2400&q=80",
-    label: "Ivory Suite",
-    location: "Vijay Nagar, Indore",
-  },
-];
-
-const SLIDES: Slide[] = [
-  ...(HERO_REEL.src
-    ? [
-        {
-          src: HERO_REEL.poster,
-          label: "Studio Showreel",
-          location: "HM DESIGNZ · Indore",
-          video: HERO_REEL.src,
-          hold: 12000,
-        },
-      ]
-    : []),
-  ...STILL_SLIDES,
-];
+const HERO_VIDEO = "/videos/hero.mp4";
+const HERO_POSTER = "/videos/hero-poster.jpg";
+const FALLBACK_VIDEO =
+  "https://videos.pexels.com/video-files/5744424/5744424-hd_1920_1080_30fps.mp4";
+const FALLBACK_POSTER =
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80";
 
 const copyContainer: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.14, delayChildren: 0.45 } },
+  show: { transition: { staggerChildren: 0.14, delayChildren: 0.4 } },
 };
 
 const copyItem: Variants = {
@@ -85,264 +38,90 @@ const copyItem: Variants = {
   },
 };
 
-const captionContainer: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-};
-
-const captionItem: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 14,
-    filter: "blur(6px)",
-    transition: { duration: 0.4, ease: "easeIn" },
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.75, ease: EASE },
-  },
-};
-
-const pad = (n: number) => String(n + 1).padStart(2, "0");
-
+/** Minimal full-bleed video hero: one film, one line, two actions. */
 export function CinematicHero() {
   const reduce = useReducedMotion();
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  // Gentle parallax as the visitor scrolls away from the hero.
-  const { scrollY } = useScroll();
-  const contentY = useTransform(scrollY, [0, 700], [0, 130]);
-  const contentOpacity = useTransform(scrollY, [0, 520], [1, 0.15]);
+  // null = still checking, so the poster shows instead of a failed request.
+  const [useLocal, setUseLocal] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (reduce || paused) return;
-    const timer = window.setInterval(
-      () => setActive((i) => (i + 1) % SLIDES.length),
-      SLIDES[active].hold ?? SLIDE_MS,
-    );
-    return () => window.clearInterval(timer);
-  }, [reduce, paused, active]);
+    let cancelled = false;
+    fetch(HERO_VIDEO, { method: "HEAD" })
+      .then((res) => {
+        const type = res.headers.get("content-type") ?? "";
+        if (!cancelled) setUseLocal(res.ok && type.startsWith("video"));
+      })
+      .catch(() => !cancelled && setUseLocal(false));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Video drifts slower than the page for a gentle parallax on scroll.
+  const { scrollY } = useScroll();
+  const videoY = useTransform(scrollY, [0, 800], [0, 140]);
 
   return (
-    <section
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      className="relative isolate -mt-[74px] flex min-h-[100svh] flex-col overflow-hidden pt-[74px]"
-    >
-      {/* --- Layered reel: ambient video + stills, slow dissolve + Ken Burns --- */}
-      <div aria-hidden="true" className="absolute inset-0 -z-20 bg-ink">
-        {SLIDES.map((slide, i) => (
-          <motion.div
-            key={slide.label}
-            className="absolute inset-0"
-            initial={false}
-            animate={{ opacity: i === active ? 1 : 0 }}
-            transition={{ duration: reduce ? 0.6 : FADE_S, ease: "easeInOut" }}
-          >
-            {slide.video ? (
-              <div className="ken-burns size-full will-change-transform">
-                <video
-                  src={slide.video}
-                  poster={slide.src}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="size-full object-cover"
-                />
-              </div>
-            ) : (
-              <img
-                src={slide.src}
-                alt=""
-                loading={i === 0 ? "eager" : "lazy"}
-                className="ken-burns size-full object-cover will-change-transform"
-                style={{ animationDelay: `${i * -4.5}s` }}
-              />
-            )}
-          </motion.div>
-        ))}
+    <section className="relative isolate -mt-[92px] flex min-h-[100svh] flex-col bg-background sm:-mt-[104px]">
+      {/* --- Pure video: three quarters of the first screen --- */}
+      <div className="relative h-[56svh] min-h-[300px] sm:h-[75svh] sm:min-h-[440px] overflow-hidden rounded-b-[1.75rem] bg-champagne sm:rounded-b-[2.5rem]">
+        <motion.div
+          aria-hidden="true"
+          style={reduce ? undefined : { y: videoY }}
+          className="absolute inset-x-0 -top-[10%] h-[120%]"
+        >
+          <video
+            key={String(useLocal)}
+            src={useLocal === null ? undefined : useLocal ? HERO_VIDEO : FALLBACK_VIDEO}
+            poster={useLocal ? HERO_POSTER : FALLBACK_POSTER}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="size-full object-cover"
+          />
+        </motion.div>
       </div>
 
-      {/* --- Cinematic grading overlays --- */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-background/30"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-background/95 via-background/45 to-transparent"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55))]"
-      />
-
-      {/* --- Copy: soft blur-to-focus fade on load --- */}
-      <motion.div
-        style={reduce ? undefined : { y: contentY, opacity: contentOpacity }}
-        className="relative flex flex-1 items-center"
-      >
-        <Container className="py-24">
-          <motion.div
-            variants={copyContainer}
-            initial={reduce ? undefined : "hidden"}
-            animate={reduce ? undefined : "show"}
-            className="max-w-3xl"
-          >
-            <motion.div variants={copyItem} className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-black/30 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.28em] text-gold-soft backdrop-blur">
-                <span className="size-1.5 animate-pulse rounded-full bg-gold" />
-                Architecture &amp; Interiors · Indore
-              </span>
-            </motion.div>
-
+      {/* --- Headline and actions below the film --- */}
+      <Container className="flex flex-1 items-center py-8 sm:py-10">
+        <motion.div
+          variants={copyContainer}
+          initial={reduce ? undefined : "hidden"}
+          animate={reduce ? undefined : "show"}
+          className="flex w-full flex-col gap-7 lg:flex-row lg:items-end lg:justify-between"
+        >
+          <div className="max-w-3xl">
+            <motion.p
+              variants={copyItem}
+              className="text-[11px] font-medium uppercase tracking-[0.3em] text-gold-deep sm:tracking-[0.34em]"
+            >
+              Architecture &amp; Interiors · Indore
+            </motion.p>
             <motion.h1
               variants={copyItem}
-              className="mt-8 text-4xl font-medium leading-[1.05] tracking-[-0.03em] text-balance sm:text-6xl lg:text-[4.5rem]"
+              className="mt-3 text-[1.6rem] font-medium leading-[1.08] tracking-[-0.03em] text-balance sm:mt-4 sm:text-5xl"
             >
-              Homes that feel like you,
-              <span className="mt-1 block font-display italic text-gradient-gold">
+              Homes that feel like you,{" "}
+              <span className="font-display italic text-gradient-gold">
                 designed to stay that way.
               </span>
             </motion.h1>
-
-            <motion.p
-              variants={copyItem}
-              className="mt-7 max-w-xl text-base leading-8 text-foreground/75 sm:text-lg"
-            >
-              HM DESIGNZ is an Indore-based design studio creating unique
-              architectural and interior solutions — modern, warm and quietly
-              Vastu-aligned. Thoughtful design, made personal.
-            </motion.p>
-
-            <motion.div
-              variants={copyItem}
-              className="mt-10 flex flex-col gap-3 sm:flex-row"
-            >
-              <GoldButton to="/projects">
-                Explore Projects
-                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-              </GoldButton>
-              <GhostButton
-                to="/contact"
-                className="border-white/25 bg-black/20 backdrop-blur"
-              >
-                Start Your Journey
-              </GhostButton>
-            </motion.div>
-          </motion.div>
-        </Container>
-      </motion.div>
-
-      {/* --- Bottom bar: slide caption, progress, scroll cue --- */}
-      <div className="relative">
-        <Container className="pb-9">
-          <div className="flex flex-col gap-7 border-t border-white/10 pt-6 sm:flex-row sm:items-end sm:justify-between">
-            {/* Active slide caption */}
-            <div className="min-h-[62px]">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={active}
-                  variants={captionContainer}
-                  initial={reduce ? undefined : "hidden"}
-                  animate={reduce ? undefined : "show"}
-                  exit={reduce ? undefined : "hidden"}
-                >
-                  <motion.p
-                    variants={captionItem}
-                    className="flex items-center gap-2.5 text-[10px] uppercase tracking-[0.28em] text-gold"
-                  >
-                    <motion.span
-                      className="inline-block h-px bg-gold/70"
-                      initial={reduce ? undefined : { width: 0 }}
-                      animate={{ width: reduce ? 22 : 22 }}
-                      transition={{ duration: 0.7, ease: EASE }}
-                    />
-                    Now viewing
-                  </motion.p>
-                  <motion.p
-                    variants={captionItem}
-                    className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1"
-                  >
-                    <span className="text-base text-foreground/95">
-                      {SLIDES[active].label}
-                    </span>
-                    <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                      {SLIDES[active].location}
-                    </span>
-                  </motion.p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Progress indicators + slide counter */}
-            <div className="flex items-center gap-5">
-              <span className="font-display text-sm tabular-nums text-muted-foreground">
-                <span className="text-gold">{pad(active)}</span>
-                <span className="mx-1.5 text-muted-foreground/50">/</span>
-                {pad(SLIDES.length - 1)}
-              </span>
-
-              <div className="flex items-center gap-2">
-                {SLIDES.map((slide, i) => (
-                  <button
-                    key={slide.src}
-                    type="button"
-                    aria-label={`Show ${slide.label}`}
-                    aria-current={i === active}
-                    onClick={() => setActive(i)}
-                    className="group relative h-1.5 overflow-hidden rounded-full bg-white/20 transition-[width,background-color] duration-500 ease-out hover:bg-white/35"
-                    style={{ width: i === active ? "3.5rem" : "2.25rem" }}
-                  >
-                    {i === active && (
-                      <motion.span
-                        key={active}
-                        className="absolute inset-y-0 left-0 rounded-full bg-gold"
-                        initial={{ width: reduce ? "100%" : "0%" }}
-                        animate={{ width: "100%" }}
-                        transition={{
-                          duration:
-                            reduce || paused
-                              ? 0.45
-                              : (SLIDES[active].hold ?? SLIDE_MS) / 1000,
-                          ease: "linear",
-                        }}
-                      />
-                    )}
-                    {i !== active && (
-                      <span className="absolute inset-0 bg-gold/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {/* Bouncing scroll cue */}
-              <a
-                href="#work"
-                aria-label="Scroll to projects"
-                className="hidden items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-foreground/50 transition-colors hover:text-gold lg:inline-flex"
-              >
-                Scroll
-                <motion.span
-                  animate={reduce ? undefined : { y: [0, 7, 0] }}
-                  transition={{
-                    duration: 1.9,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="inline-flex size-8 items-center justify-center rounded-full border border-white/20"
-                >
-                  <ArrowDown className="size-3.5" />
-                </motion.span>
-              </a>
-            </div>
           </div>
-        </Container>
-      </div>
+
+          <motion.div
+            variants={copyItem}
+            className="flex shrink-0 gap-3 [&>a]:h-11 [&>a]:flex-1 [&>a]:whitespace-nowrap [&>a]:px-3 [&>a]:text-[13px] sm:[&>a]:h-12 sm:[&>a]:flex-none sm:[&>a]:px-7 sm:[&>a]:text-sm"
+          >
+            <GoldButton to="/projects">
+              Explore Projects
+              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </GoldButton>
+            <GhostButton to="/contact">Start Your Journey</GhostButton>
+          </motion.div>
+        </motion.div>
+      </Container>
     </section>
   );
 }

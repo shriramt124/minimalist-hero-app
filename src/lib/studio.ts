@@ -596,8 +596,14 @@ export interface Film {
   featured?: boolean;
 }
 
-const clip = (file: string) =>
-  `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/${file}`;
+/** Free stock interior footage (Pexels) — swap for the studio's own films. */
+const FILM_SOURCES = [
+  "https://videos.pexels.com/video-files/5744424/5744424-hd_1920_1080_30fps.mp4",
+  "https://videos.pexels.com/video-files/7533207/7533207-hd_1920_1080_30fps.mp4",
+  "https://videos.pexels.com/video-files/3769951/3769951-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/7578546/7578546-hd_1920_1080_30fps.mp4",
+];
+const clip = (n: number) => FILM_SOURCES[n % FILM_SOURCES.length];
 
 export const FILMS: Film[] = [
   {
@@ -609,7 +615,7 @@ export const FILMS: Film[] = [
     blurb:
       "A minute inside HM DESIGNZ — light studies, material samples and finished rooms across Indore, cut to the studio's own rhythm.",
     poster: img("photo-1600585154340-be6161a56a0c", 1800),
-    src: clip("ForBiggerBlazes.mp4"),
+    src: clip(0),
     featured: true,
   },
   {
@@ -621,7 +627,7 @@ export const FILMS: Film[] = [
     blurb:
       "Walking Serial Residency, where a central light court carries daylight through every room of the bungalow.",
     poster: img("photo-1600210492486-724fe5c67fb0", 1400),
-    src: clip("ForBiggerEscapes.mp4"),
+    src: clip(1),
   },
   {
     slug: "noir-penthouse-film",
@@ -632,7 +638,7 @@ export const FILMS: Film[] = [
     blurb:
       "Dusk falls in the Noir Penthouse — smoked oak, warm pools of light and a city view that becomes the artwork.",
     poster: img("photo-1600607687920-4e2a09cf159d", 1400),
-    src: clip("ForBiggerFun.mp4"),
+    src: clip(2),
   },
   {
     slug: "courtyard-house-film",
@@ -643,7 +649,7 @@ export const FILMS: Film[] = [
     blurb:
       "How traditional Vastu zoning became structure, not decoration, at The Courtyard House in Bicholi Mardana.",
     poster: img("photo-1613490493576-7fde63acd811", 1400),
-    src: clip("ForBiggerJoyrides.mp4"),
+    src: clip(3),
   },
   {
     slug: "ember-kitchen-film",
@@ -654,7 +660,7 @@ export const FILMS: Film[] = [
     blurb:
       "A hardworking Ember Kitchen built around the daily rhythm of a joint family — veneer, quartz and soft task light.",
     poster: img("photo-1631679706909-1844bbd07221", 1400),
-    src: clip("ForBiggerMeltdowns.mp4"),
+    src: clip(4),
   },
   {
     slug: "terra-office-film",
@@ -665,7 +671,7 @@ export const FILMS: Film[] = [
     blurb:
       "Terra Office in Palasia — planted neighbourhoods, acoustic oak and quiet luxury for a growing firm.",
     poster: img("photo-1497366216548-37526070297c", 1400),
-    src: clip("VolkswagenGTIReview.mp4"),
+    src: clip(5),
   },
 ];
 
@@ -677,7 +683,7 @@ export const FILMS: Film[] = [
  * title film; `poster` is the still shown while it buffers.
  */
 export const LAUNCH_FILM: { src: string; poster: string } = {
-  src: clip("TearsOfSteel.mp4"),
+  src: clip(6),
   poster: img("photo-1600585154340-be6161a56a0c", 2400),
 };
 

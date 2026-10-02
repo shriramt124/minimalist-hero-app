@@ -84,7 +84,7 @@ export function FilmLightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: EASE }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md sm:p-8"
+      className="dark fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md sm:p-8"
     >
       <motion.div
         onClick={(event) => event.stopPropagation()}
@@ -204,7 +204,7 @@ export function FeaturedFilm({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-3xl border border-border bg-black",
+        "dark relative overflow-hidden rounded-3xl border border-border bg-black text-foreground",
         className,
       )}
     >

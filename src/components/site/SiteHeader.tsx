@@ -35,26 +35,30 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-500",
-        scrolled
-          ? "border-b border-border bg-background/80 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent",
+        "sticky top-0 z-50 h-[92px] w-full px-3 pt-3 sm:h-[104px] sm:px-6",
       )}
     >
-      <div className="mx-auto flex h-[74px] w-full max-w-7xl items-center justify-between gap-6 px-5 sm:px-8">
+      <div
+        className={cn(
+          "mx-auto flex h-[72px] sm:h-[84px] w-full max-w-7xl items-center justify-between gap-6 rounded-full border px-6 transition-all duration-500 sm:px-9",
+          scrolled
+            ? "border-border bg-background/85 shadow-[0_8px_30px_-12px_rgba(42,36,28,0.2)] backdrop-blur-xl"
+            : "border-white/40 bg-background/55 backdrop-blur-md",
+        )}
+      >
         <Link to="/" aria-label="HM DESIGNZ home">
           <Logo />
         </Link>
 
         {/* Desktop navigation */}
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-9 xl:flex">
           {NAV_LINKS.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
                 cn(
-                  "group relative text-[13px] font-medium tracking-[0.02em] transition-colors",
+                  "group relative text-[14px] font-medium tracking-[0.03em] transition-colors",
                   isActive || isActivePath(link.to, pathname)
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground",
@@ -78,7 +82,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-3 xl:flex">
           <Link
             to={isAuthenticated ? "/dashboard" : "/auth?returnTo=%2Fdashboard"}
             className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -88,7 +92,7 @@ export function SiteHeader() {
           </Link>
           <Button
             asChild
-            className="h-9 rounded-full bg-gold px-5 text-[13px] font-medium text-primary-foreground hover:bg-gold-soft"
+            className="h-11 rounded-full bg-gold px-6 text-[14px] font-medium text-primary-foreground hover:bg-gold-soft"
           >
             <Link to="/contact">Start Your Journey</Link>
           </Button>
@@ -100,7 +104,7 @@ export function SiteHeader() {
             <button
               type="button"
               aria-label="Open menu"
-              className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-gold/60 lg:hidden"
+              className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-gold/60 xl:hidden"
             >
               <Menu className="size-5" />
             </button>

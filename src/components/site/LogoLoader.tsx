@@ -73,7 +73,7 @@ export function LogoLoader({
           />
           <motion.path
             d="M20 29V17l5 6 5-6v12"
-            stroke="#c9a86a"
+            stroke="#8a7556"
             strokeWidth="1.6"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -97,7 +97,7 @@ export function LogoLoader({
       </motion.div>
 
       {/* Indeterminate hairline sweep */}
-      <div className="relative h-px w-40 overflow-hidden bg-white/10">
+      <div className="relative h-px w-40 overflow-hidden bg-foreground/10">
         <motion.span
           aria-hidden="true"
           className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-gold to-transparent"
