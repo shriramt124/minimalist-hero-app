@@ -90,7 +90,12 @@ class RootErrorBoundary extends React.Component<
   }
 }
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+// Without a Convex deployment the public pages still render; only the
+// enquiry form and client portal need a real URL (set VITE_CONVEX_URL).
+const convex = new ConvexReactClient(
+  (import.meta.env.VITE_CONVEX_URL as string | undefined) ??
+    "https://not-configured.convex.cloud",
+);
 
 
 
