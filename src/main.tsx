@@ -2,7 +2,6 @@ import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { RequireAuth } from "@/components/RequireAuth";
 import { LogoLoader } from "@/components/site/LogoLoader";
-import { LaunchIntro } from "@/components/site/LaunchIntro";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
@@ -132,7 +131,6 @@ createRoot(document.getElementById("root")!).render(
       <ConvexAuthProvider client={convex}>
         <BrowserRouter>
           <RouteSyncer />
-          <LaunchIntro />
           <Suspense fallback={<RouteLoading />}>
             <Routes>
               <Route element={<SiteLayout />}>
